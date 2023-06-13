@@ -23,19 +23,20 @@ const store = new sessionStore({
   db,
 });
 
-(async () => {
-  await db.sync();
-})();
-store.sync();
-
+// (async () => {
+//     await db.sync();
+//   })();
+// store.sync();
+  
 app.use(session({
   secret: process.env.SESS_SECRET,
   resave: false,
   saveUninitialized: true,
+  proxy: true,
   store,
   cookie: {
-    secure: false,
-    httpOnly: true,
+    secure: true,
+    httpOnly: false,
     sameSite: 'none',
     maxAge: 1000 * 60 * 60 * 24
   },
