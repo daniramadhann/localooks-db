@@ -10,12 +10,12 @@ export const requestResponse = {
   }),
   successWithData: (data) => ({
     success: true,
-    message: 'Berhasil memuat data',
+    message: 'Data has been loaded',
     data,
   }),
   successLogin: (data) => ({
     success: true,
-    message: 'Berhasil Login',
+    message: 'Login Success',
     data,
   }),
   serverError: (data) => ({
