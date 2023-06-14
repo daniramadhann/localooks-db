@@ -48,8 +48,6 @@ app.use(cors({
     'http://localhost:9000',
     'http://localhost:3000',
     'http://127.0.0.1:8080',
-    'https://umkm-merdeka-dashboard.netlify.app',
-    'https://umkm-merdeka.netlify.app'
   ],
 }));
 
@@ -64,7 +62,7 @@ app.use(AuthRoute);
 
 
 app.get('/', (req, res) => {
-  res.send('<h1>Halo, Selamat datang di UMKM Merdeka API</h1>');
+  res.send('<h1>Localooks API</h1>');
 });
 
 app.listen(PORT, () => {
