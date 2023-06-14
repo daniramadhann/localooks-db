@@ -28,27 +28,6 @@ const Users = db.define('users', {
       isEmail: true,
     },
   },
-  telephone: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
-  university: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
-  nim: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
   password: {
     type: DataTypes.STRING,
     allowNull: false,

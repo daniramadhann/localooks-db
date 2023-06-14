@@ -21,22 +21,8 @@ const Products = db.define('product', {
       len: [3, 100],
     },
   },
-  price: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
-  image: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true,
-    },
-  },
-  url: {
-    type: DataTypes.STRING,
+  description: {
+    type: DataTypes.TEXT('long'),
     allowNull: false,
     validate: {
       notEmpty: true,
@@ -49,8 +35,15 @@ const Products = db.define('product', {
       notEmpty: true,
     },
   },
-  description: {
-    type: DataTypes.TEXT('long'),
+  image_url: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
+  web_url: {
+    type: DataTypes.STRING,
     allowNull: false,
     validate: {
       notEmpty: true,

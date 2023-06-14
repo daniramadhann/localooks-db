@@ -10,10 +10,10 @@ export const login = async (req, res) => {
     },
   });
 
-  if (!user) return res.status(404).json(requestResponse.failed('User Tidak Ditemukan'));
+  if (!user) return res.status(404).json(requestResponse.failed('User Not Found'));
 
   const match = await argon2.verify(user.password, req.body.password);
-  if (!match) return res.status(400).json(requestResponse.failed('Password Yang Anda Masukkan Salah'));
+  if (!match) return res.status(400).json(requestResponse.failed('Invalid Password'));
 
   req.session.userId = user.uuid;
 
@@ -21,9 +21,6 @@ export const login = async (req, res) => {
     uuid,
     name,
     email,
-    telephone,
-    university,
-    nim,
     role,
   } = user;
 
@@ -31,9 +28,6 @@ export const login = async (req, res) => {
     uuid,
     name,
     email,
-    telephone,
-    university,
-    nim,
     role,
   };
 
@@ -42,23 +36,23 @@ export const login = async (req, res) => {
 
 export const session = async (req, res) => {
   if (!req.session.userId) {
-    return res.status(401).json(requestResponse.failed('Mohon Login Ke Akun Anda dulu!'));
+    return res.status(401).json(requestResponse.failed('Please log in before proceeding'));
   }
 
   const user = await User.findOne({
-    attributes: ['uuid', 'name', 'email', 'telephone', 'university', 'nim', 'role'],
+    attributes: ['uuid', 'name', 'email', 'role'],
     where: {
       uuid: req.session.userId,
     },
   });
 
-  if (!user) return res.status(404).json(requestResponse.failed('User Tidak Ditemukan, Ayo Daftar'));
+  if (!user) return res.status(404).json(requestResponse.failed('User Not Found'));
   res.status(200).json(requestResponse.successWithData(user));
 };
 
 export const logout = (req, res) => {
   req.session.destroy((err) => {
-    if (err) return res.status(400).json(requestResponse.failed('Tidak Bisa Logout'));
-    res.status(200).json(requestResponse.success('Berhasil Logout'));
+    if (err) return res.status(400).json(requestResponse.failed('Logout Failed'));
+    res.status(200).json(requestResponse.success('Logout Success'));
   });
 };

@@ -11,21 +11,21 @@ export const getProducts = async (req, res) => {
     let response;
     if (req.role === 'user') {
       response = await Product.findAll({
-        attributes: ['uuid', 'productName', 'price', 'image', 'url', 'category', 'description'],
+        attributes: ['uuid', 'productName', 'description', 'category', 'image_url', 'web_url'],
         where: {
           userId: req.userId,
         },
         include: [{
           model: User,
-          attributes: ['name', 'telephone', 'university'],
+          attributes: ['name'],
         }],
       });
     } else {
       response = await Product.findAll({
-        attributes: ['uuid', 'productName', 'price', 'image', 'url', 'category', 'description'],
+        attributes: ['uuid', 'productName', 'description', 'category', 'image_url', 'web_url'],
         include: [{
           model: User,
-          attributes: ['name', 'telephone', 'university'],
+          attributes: ['name'],
         }],
       });
     }
@@ -38,10 +38,10 @@ export const getProducts = async (req, res) => {
 export const getProductsForGuest = async (req, res) => {
   try {
     const response = await Product.findAll({
-      attributes: ['uuid', 'productName', 'price', 'image', 'url', 'category', 'description'],
+      attributes: ['uuid', 'productName', 'description', 'category', 'image_url', 'web_url'],
       include: [{
         model: User,
-        attributes: ['name', 'telephone', 'university'],
+        attributes: ['name'],
       }],
     });
     res.status(200).json(requestResponse.successWithData(response));
@@ -58,29 +58,29 @@ export const getProductById = async (req, res) => {
       },
     });
 
-    if (!product) return res.status(404).json(requestResponse.failed('Produk tidak ditemukan'));
+    if (!product) return res.status(404).json(requestResponse.failed('Product Not Found'));
 
     let response;
     if (req.role === 'user') {
       response = await Product.findOne({
-        attributes: ['uuid', 'productName', 'price', 'image', 'url', 'category', 'description'],
+        attributes: ['uuid', 'productName', 'description', 'category', 'image_url', 'web_url'],
         where: {
           [Op.and]: [{ id: product.id }, { userId: req.userId }],
         },
         include: [{
           model: User,
-          attributes: ['name', 'telephone', 'university'],
+          attributes: ['name'],
         }],
       });
     } else {
       response = await Product.findOne({
-        attributes: ['uuid', 'productName', 'price', 'image', 'url', 'category', 'description'],
+        attributes: ['uuid', 'productName', 'description', 'category', 'image_url', 'web_url'],
         where: {
           id: product.id,
         },
         include: [{
           model: User,
-          attributes: ['name', 'telephone', 'university'],
+          attributes: ['name'],
         }],
       });
     }
@@ -98,16 +98,16 @@ export const getProductByIdForGuest = async (req, res) => {
       },
     });
 
-    if (!product) return res.status(404).json(requestResponse.failed('Produk tidak ditemukan'));
+    if (!product) return res.status(404).json(requestResponse.failed('Product Not Found'));
 
     const response = await Product.findOne({
-      attributes: ['uuid', 'productName', 'price', 'image', 'url', 'category', 'description'],
+      attributes: ['uuid', 'productName', 'description', 'category', 'image_url', 'web_url'],
       where: {
         id: product.id,
       },
       include: [{
         model: User,
-        attributes: ['name', 'telephone', 'university'],
+        attributes: ['name'],
       }],
     });
     res.status(200).json(requestResponse.successWithData(response));
@@ -118,21 +118,20 @@ export const getProductByIdForGuest = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   const {
-    productName, price, category, description, image, url
+    productName, description, category, image_url, web_url
   } = req.body;
 
   try {
     await Product.create({
       productName,
-      price,
-      image,
-      url,
-      category,
       description,
+      category,
+      image_url,
+      web_url,
       userId: req.userId,
     });
 
-    res.status(201).json(requestResponse.success('Produk berhasil ditambahkan'));
+    res.status(201).json(requestResponse.success('Product has been added'));
   } catch (error) {
     res.status(500).json(requestResponse.serverError(error.message));
   }
@@ -148,35 +147,9 @@ export const updateProduct = async (req, res) => {
       },
     });
 
-    if (!product) return res.status(404).json(requestResponse.failed('Produk tidak ditemukan'));
-
-    let fileName = '';
-
-    if (req.files === null) {
-      fileName = product.image;
-    } else {
-      const file = req.files.image;
-      const fileSize = file.data.length;
-      const ext = path.extname(file.name);
-      fileName = file.md5 + ext;
-      const allowedType = ['.png', '.jpg', '.jpeg'];
-
-      if (!allowedType.includes(ext.toLowerCase())) return res.status(422).json(requestResponse.failed('Invalid Image'));
-
-      if (fileSize > 5000000) return res.status(422).json(requestResponse.failed('Gambar harus lebih kecil dari 5 mb'));
-
-      const filePath = `./static/images/${product.image}`;
-      fs.unlinkSync(filePath);
-
-      file.mv(`./static/images/${fileName}`, (err) => {
-        if (err) return res.status(500).json(requestResponse.failed(err.message));
-      });
-    }
-
-    const url = `${req.protocol}://${req.get('host')}/images/${fileName}`;
+    if (!product) return res.status(404).json(requestResponse.failed('Produk Not Found'));
     const {
       productName,
-      price,
       category,
       description,
     } = req.body;
@@ -184,33 +157,31 @@ export const updateProduct = async (req, res) => {
     if (req.role === 'admin') {
       await Product.update({
         productName,
-        price,
-        image: fileName,
-        url,
-        category,
         description,
+        category,
+        image_url,
+        web_url,
       }, {
         where: {
           id: product.id,
         },
       });
     } else {
-      if (req.userId !== product.userId) return res.status(403).json(requestResponse.failed('Akses Terlarang'));
+      if (req.userId !== product.userId) return res.status(403).json(requestResponse.failed('Access Denied'));
 
       await Product.update({
         productName,
-        price,
-        image: fileName,
-        url,
-        category,
         description,
+        category,
+        image_url,
+        web_url,
       }, {
         where: {
           [Op.and]: [{ id: product.id }, { userId: req.userId }],
         },
       });
     }
-    res.status(200).json(requestResponse.success('Produk Berhasil di update'));
+    res.status(200).json(requestResponse.success('Product has been updated'));
   } catch (error) {
     res.status(500).json(requestResponse.serverError(error.message));
   }
@@ -224,10 +195,7 @@ export const deleteProduct = async (req, res) => {
       },
     });
 
-    if (!product) return res.status(404).json(requestResponse.failed('Produk tidak ditemukan'));
-
-    const filePath = `./static/images/${product.image}`;
-    fs.unlinkSync(filePath);
+    if (!product) return res.status(404).json(requestResponse.failed('Product Not Found'));
 
     if (req.role === 'admin') {
       await Product.destroy({
@@ -236,7 +204,7 @@ export const deleteProduct = async (req, res) => {
         },
       });
     } else {
-      if (req.userId !== product.userId) return res.status(403).json(requestResponse.failed('Akses Terlarang'));
+      if (req.userId !== product.userId) return res.status(403).json(requestResponse.failed('Access Denied'));
 
       await Product.destroy({
         where: {
@@ -244,7 +212,7 @@ export const deleteProduct = async (req, res) => {
         },
       });
     }
-    res.status(200).json(requestResponse.success('Produk Berhasil di hapus'));
+    res.status(200).json(requestResponse.success('Product has been deleted'));
   } catch (error) {
     res.status(500).json(requestResponse.serverError(error.message));
   }
