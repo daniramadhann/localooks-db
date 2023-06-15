@@ -47,6 +47,7 @@ app.use(cors({
   origin: [
     'http://localhost:9000',
     'http://localhost:3000',
+    'http://localhost:9010',
     'http://127.0.0.1:8080',
   ],
 }));
