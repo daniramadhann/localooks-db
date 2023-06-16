@@ -1,7 +1,5 @@
 /* eslint-disable consistent-return */
 import { Op } from 'sequelize';
-import path from 'path';
-import fs from 'fs';
 import Product from '../models/ProductModel.js';
 import User from '../models/UserModel.js';
 import { requestResponse } from '../message.js';
@@ -35,7 +33,7 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const getProductsForGuest = async (req, res) => {
+export const getAllProducts = async (req, res) => {
   try {
     const response = await Product.findAll({
       attributes: ['uuid', 'productName', 'description', 'category', 'image_url', 'web_url'],
@@ -90,7 +88,7 @@ export const getProductById = async (req, res) => {
   }
 };
 
-export const getProductByIdForGuest = async (req, res) => {
+export const getAllProductById = async (req, res) => {
   try {
     const product = await Product.findOne({
       where: {

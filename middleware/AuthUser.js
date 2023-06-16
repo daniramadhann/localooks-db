@@ -2,7 +2,7 @@
 import User from '../models/UserModel.js';
 import { requestResponse } from '../message.js';
 
-export const verfyUser = async (req, res, next) => {
+export const verifyUser = async (req, res, next) => {
   if (!req.session.userId) {
     return res.status(401).json(requestResponse.failed('Please log in before proceeding'));
   }

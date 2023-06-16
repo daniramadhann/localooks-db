@@ -1,23 +1,21 @@
 import express from 'express';
 import {
   getProducts,
-  getProductsForGuest,
+  getAllProducts,
   getProductById,
-  getProductByIdForGuest,
+  getAllProductById,
   createProduct,
   updateProduct,
   deleteProduct,
 } from '../controllers/Products.js';
-import { verfyUser } from '../middleware/AuthUser.js';
+import { verifyUser } from '../middleware/AuthUser.js';
 
 const router = express.Router();
 
-router.get('/products', verfyUser, getProducts);
-router.get('/productsguest', getProductsForGuest);
-router.get('/products/:id', verfyUser, getProductById);
-router.get('/productsguest/:id', getProductByIdForGuest);
-router.post('/products', verfyUser, createProduct);
-router.put('/products/:id', verfyUser, updateProduct);
-router.delete('/products/:id', verfyUser, deleteProduct);
+router.get('/products', getAllProducts);
+router.get('/products/:id', getAllProductById);
+router.post('/products', verifyUser, createProduct);
+router.put('/products/:id', verifyUser, updateProduct);
+router.delete('/products/:id', verifyUser, deleteProduct);
 
 export default router;
