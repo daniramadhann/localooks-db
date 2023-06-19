@@ -48,7 +48,7 @@ app.use(cors({
     'http://localhost:9000',
     'http://localhost:3000',
     'http://localhost:9010',
-    'https://localooks.netlify.app/',
+    'https://localooks.netlify.app',
   ],
 }));
 
